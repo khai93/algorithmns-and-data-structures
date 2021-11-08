@@ -1,0 +1,11 @@
+{
+  "name": "algorithmns-and-data-structures",
+  "packageManager": "yarn@3.0.0",
+  "scripts": {
+    "start": "ts-node src/main.ts"
+  },
+  "dependencies": {
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
+  }
+}
