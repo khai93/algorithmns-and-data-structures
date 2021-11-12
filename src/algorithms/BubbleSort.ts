@@ -17,6 +17,10 @@ export function BubbleSort(arr: IComparable[], length: number = arr.length): ICo
     }
 
     if (counter > 0)
+        /**
+         * Recursive call to function with its length subtracted by one.
+         * We subtract because the last one will always sorted correctly after one iteration.
+         */
         return BubbleSort(arr, length--); 
 
     return arr;
