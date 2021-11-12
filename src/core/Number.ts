@@ -5,7 +5,10 @@ export class ComparableNumber implements IComparable {
         public val: number
     ) { }
 
-    CompareTo(obj: ComparableNumber): boolean {
+    public CompareTo(obj: unknown): boolean {
+        if (!(obj instanceof ComparableNumber))
+            return false;
+
         return this.val > obj.val;
     }
 }
