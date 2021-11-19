@@ -1,119 +1,95 @@
 import { IComparable } from "../core/IComparable";
-import { Node } from "./Node";
 
-
-export class HeapNode {
-    parent: HeapNode | undefined;
-    val: IComparable;
-    right: HeapNode | undefined;
-    left: HeapNode | undefined;
-
-    constructor(val: IComparable, right: HeapNode | undefined, left: HeapNode | undefined, parent: HeapNode | undefined) {
-        this.right = right;
-        this.left = left;
-        this.val = val;
-        this.parent = parent;
-    }
-
-    public toArray(): IComparable[] {
-        const rootNode = get_heap_root(this);
-        let out: IComparable[] = [];
-
-        function storeNode(node: HeapNode | undefined, index = 0) {
-            if (node == null)
-                return;
-            
-            out[index] = node.val;
-
-            storeNode(node.left, index*2+1);
-            storeNode(node.right, index*2+2);
-        }
-
-        storeNode(rootNode);
-
-        return out;
-    }
-}
-
-/**
- * Get the root heap from any point of the tree
- * @param node 
- * @returns 
- */
-export function get_heap_root(node: HeapNode): HeapNode {
-    let rootNode: HeapNode = node;
-
-    while (rootNode.parent != null) {
-        rootNode = rootNode.parent;
-    }
-
-    return rootNode;
-}
-
-
-export function get_heap_end(node: HeapNode, level = 0): HeapNode {
-    let endNode: HeapNode = node;
-    
-
-
-    return endNode;
-}
-
-/**
- * Build a heap structure from a normal array
- * @param arr normal array
- * @returns root of new heap
- */
-export function build_heap(arr: IComparable[], index: number, parent?: HeapNode): HeapNode {
-    const node = new HeapNode(arr[index], undefined, undefined, parent);
-
-    if (arr.length > index*2+1)
-        node.left = build_heap(arr, index*2+1, node);
-
-    if (arr.length > index*2+2)
-        node.right = build_heap(arr, index*2+2, node);
-
-    return node;
-}
 
 /**
  * Builds a max heap structure from an unordered array
  * Follow Max Heap Property (all children nodes values are less than the parent/current node.)
- * @returns Root of heap
- */
-export function build_max_heap(arr: IComparable[]): HeapNode {
-    const rootNode = build_heap(arr, 0);
-
+ * Complexity: O(n)
+*/
+export function build_max_heap(arr: IComparable[]) {
+    let i = arr.length;
     
+    while (Math.floor(i / 2) >= 0) {
+        i = Math.floor(i / 2);
+        max_heapify(arr, i); 
+
+        if (i == 0)
+            break;
+    }
+}
+
+export function build_min_heap(arr: IComparable[]) {
+    let i = arr.length;
+    
+    while (Math.floor(i / 2) >= 0) {
+        min_heapify(arr, i); 
+
+        if (i == 0)
+            break;
+
+        i = Math.floor(i / 2);
+    }
+}
 
 
-    return rootNode;
+export function find_max_in_min_heap(arr: IComparable[]) {
+    let max = arr[0];
+
+    for (let i = 0; i < arr.length; i++) {
+        
+    }
 }
 
 /**
  * Correct a single node to follow the max heap property
+ * Complexity: O(lg n)
  * @param arr The array
  * @param index Index of node
  */
-export function max_heapify(node: HeapNode | undefined): void {
-    if (node == null)
+export function max_heapify(arr: IComparable[], nodeIndex: number): void {
+    if (arr[nodeIndex] == null)
+        return
+
+    // left children is greater
+    // add 1 offset becuase we will use 0-index
+    if (arr[nodeIndex*2+1] != null && arr[nodeIndex*2+1].CompareTo(arr[nodeIndex]) && arr[nodeIndex*2+1].CompareTo(arr[nodeIndex*2+2])) {
+        const temp = arr[nodeIndex*2+1];
+        arr[nodeIndex*2+1] = arr[nodeIndex];
+        arr[nodeIndex] = temp;
+
+        return max_heapify(arr, nodeIndex*2+1);
+    } 
+    
+    // right children is greater
+    if (arr[nodeIndex*2+2] != null && arr[nodeIndex*2+2].CompareTo(arr[nodeIndex])) {
+        const temp = arr[nodeIndex*2+2];
+        arr[nodeIndex*2+2] = arr[nodeIndex];
+        arr[nodeIndex] = temp;
+
+        return max_heapify(arr, nodeIndex*2+2);
+    }
+}
+
+export function min_heapify(arr: IComparable[], nodeIndex: number): void {
+    if (arr[nodeIndex] == null)
         return;
+    
+    const leftIndex = nodeIndex * 2 + 1;
+    const rightIndex = nodeIndex * 2 + 2;
 
-    if (node.left?.val.CompareTo(node.val)) {
-        const temp = node.val;
+    if (arr[leftIndex] != null && arr[nodeIndex].CompareTo(arr[leftIndex]) && !arr[nodeIndex].CompareTo(arr[rightIndex])) {
+        const temp = arr[nodeIndex];
+        arr[nodeIndex] = arr[leftIndex];
+        arr[leftIndex] = temp;
 
-        node.val = node.left!.val;
-        node.left!.val = temp;
-
-        return max_heapify(node.left);
+        return min_heapify(arr, leftIndex);
     }
 
-    if (node.right?.val.CompareTo(node.val)) {
-        const temp = node.val;
+    if (arr[rightIndex] && arr[nodeIndex].CompareTo(arr[rightIndex])) {
+        const temp = arr[nodeIndex];
+        arr[nodeIndex] = arr[rightIndex];
+        arr[rightIndex] = temp;
 
-        node.val = node.right!.val;
-        node.right!.val = temp;
-
-        return max_heapify(node.right);
+        return min_heapify(arr, rightIndex)
     }
 }
